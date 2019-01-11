@@ -4,12 +4,12 @@
 # # Last step
 # # Predict segmentations
 
-# In[ ]:
+# In[1]:
 
 
 
 
-# In[ ]:
+# In[2]:
 
 
 import os
@@ -40,7 +40,7 @@ import utils.model_builder
 
 # # Configuration
 
-# In[ ]:
+# In[3]:
 
 
 GPU_NO = "0"
@@ -51,7 +51,7 @@ experiment_name = "neutros_v3"
 
 # # Initialize keras 
 
-# In[ ]:
+# In[4]:
 
 
 from config import config_vars
@@ -76,7 +76,7 @@ keras.backend.set_session(session)
 
 # # Load and preprocessing images
 
-# In[ ]:
+# In[5]:
 
 
 def load_and_prepare_images_from_directory(input_directory):
@@ -129,35 +129,41 @@ def load_and_prepare_images_from_directory(input_directory):
 
 # # Predict images 
 
-# In[ ]:
+# In[6]:
 
 
 for directory in tqdm.tqdm(os.listdir(input_directory)):
-    [images,imagebuffer] = load_and_prepare_images_from_directory(os.path.join(input_directory,directory))
     
-    # build model and load weights
-    dim1 = images.shape[1]
-    dim2 = images.shape[2]
-    model = utils.model_builder.get_model_3_class(dim1, dim2)
-    model.load_weights(config_vars["model_file"])
-
-    #  prediction 
-    predictions = model.predict(images, batch_size=1)
-    
-    if not os.path.exists(os.path.join(output_directory,directory)):
-        os.makedirs(os.path.join(output_directory,directory)) 
-    
-    for i in range(len(images)):
-
-        image_savename = os.path.join(
-            output_directory, 
-            directory, 
-            os.path.basename(imagebuffer.files[i])
-        )
-
-        probmap = predictions[i].squeeze()
+    if os.path.exists(os.path.join(output_directory,directory)):
+        print("Folder {} processed!".format(directory))
+    else:
         
-        skimage.io.imsave(os.path.splitext(image_savename)[0] + ".png", probmap)
+    
+        [images,imagebuffer] = load_and_prepare_images_from_directory(os.path.join(input_directory,directory))
 
+        # build model and load weights
+        dim1 = images.shape[1]
+        dim2 = images.shape[2]
+        model = utils.model_builder.get_model_3_class(dim1, dim2)
+        model.load_weights(config_vars["model_file"])
+
+        #  prediction 
+        predictions = model.predict(images, batch_size=1)
+
+
+        os.makedirs(os.path.join(output_directory,directory)) 
+        for i in range(len(images)):
+
+            image_savename = os.path.join(
+                output_directory, 
+                directory, 
+                os.path.basename(imagebuffer.files[i])
+            )
+
+            probmap = predictions[i].squeeze()
+
+            skimage.io.imsave(os.path.splitext(image_savename)[0] + ".png", probmap)
+
+    
     
 
