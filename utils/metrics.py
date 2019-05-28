@@ -71,10 +71,10 @@ def contour_to_label(outline, image):
 
 ## PROBMAP TO PRED TO LABEL
 
-def probmap_to_pred(probmap, boundary_boost_factor):
-    # we need to boost the boundary class to make it more visible
+def probmap_to_pred(probmap, boundary_boost_factor, cell_boost_factor = 1,):
+    # we need to boost the boundary class to ma ke it more visible
     # this shrinks the cells a little bit but avoids undersegmentation
-    pred = np.argmax(probmap * [1, 1, boundary_boost_factor], -1)
+    pred = np.argmax(probmap * [1, cell_boost_factor , boundary_boost_factor], -1)
     
     return pred
 
