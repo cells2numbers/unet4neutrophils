@@ -43,10 +43,12 @@ import utils.model_builder
 # In[3]:
 
 
-GPU_NO = "0"
-input_directory =  "/storage/data/2018_tim_tracking/2018_08_06_migration_perturbations_asthma/images/2018_asthma_migration_data_kira"
-output_directory = "/storage/data/2018_tim_tracking/2018_08_06_migration_perturbations_asthma/images/2018_asthma_migration_data_kira_predictions"
-experiment_name = "neutros_v3"
+GPU_NO = "1"
+input_directory = "/storage/data/2018_tim_tracking/2018_06_29_lineage_tracking_blainey/images/movies/12_2018_MCF10_Drug_full/images"
+# "/storage/data/2018_tim_tracking/2018_08_06_migration_perturbations_asthma/images/2018_asthma_migration_data_kira"
+output_directory = "/storage/data/2018_tim_tracking/2018_06_29_lineage_tracking_blainey/images/movies/12_2018_MCF10_Drug_full/predictions"
+#"/storage/data/2018_tim_tracking/2018_08_06_migration_perturbations_asthma/images/2018_asthma_migration_data_kira_predictions"
+experiment_name = "09"
 
 
 # # Initialize keras 
@@ -80,7 +82,7 @@ keras.backend.set_session(session)
 
 
 def load_and_prepare_images_from_directory(input_directory):
-    image_names = glob.glob(input_directory + "/*jpg")
+    image_names = glob.glob(input_directory + "/*png")
     images = []
     imagebuffer = skimage.io.imread_collection( image_names )
     for image in imagebuffer:
@@ -137,7 +139,7 @@ for directory in tqdm.tqdm(os.listdir(input_directory)):
     if os.path.exists(os.path.join(output_directory,directory)):
         print("Folder {} processed!".format(directory))
     else:
-        
+        print("Predicting images in folder {}".format(directory))  
     
         [images,imagebuffer] = load_and_prepare_images_from_directory(os.path.join(input_directory,directory))
 
@@ -148,10 +150,15 @@ for directory in tqdm.tqdm(os.listdir(input_directory)):
         model.load_weights(config_vars["model_file"])
 
         #  prediction 
+        #for i in 
+        
+        
         predictions = model.predict(images, batch_size=1)
 
 
+        
         os.makedirs(os.path.join(output_directory,directory)) 
+        print("Saving image data into folder {}".format(output_directory))
         for i in range(len(images)):
 
             image_savename = os.path.join(
